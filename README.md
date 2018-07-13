@@ -1,3 +1,5 @@
-# SKA-AU-China-2018 - **hwswcodesign**
-
-## WP 4 – Hardware/software co-designDeliverable - Set up the workload characterisation framework on SHAO cluster that will inform the future hardware/software co-design work using an established algorithm (e.g. gridding, calibration).
+# DALiuGE monitoring framework
+This repository holds the code and all the information around the monitoring
+part of the DALiuGE workload characterisation project. It is based on work
+originated in the 2nd SKA Australia China Big Data workshop in Shanghai
+2018 in the Work Package 4 – Hardware/software co-design
