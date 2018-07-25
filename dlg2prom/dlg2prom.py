@@ -23,7 +23,8 @@ import threading
 from prometheus_client import start_http_server, Gauge
 
 # A port number of the server to expose the metrics.
-METRIC_SERVER_PORT = 8000
+# Note: ports 8000-8002 are used by DALiuGE managers.
+METRIC_SERVER_PORT = 8080
 # A prefix for metric names.
 METRIC_NAME_PREFIX = 'DALiuGE_'
 # Metric description.
