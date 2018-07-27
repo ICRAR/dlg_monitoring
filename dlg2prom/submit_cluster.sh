@@ -74,7 +74,7 @@ echo "PID=$prometheus_pid"
 #--------------------------------------------------
 
 SID=$(date +"%Y-%m-%d_%H-%M-%S")
-LOG_DIR="/tmp/vogarko-dlg-logs/"$SID
+LOG_DIR="./dlg-logs/"$SID
 # Path to logical graph.
 LOGICAL_GRAPH_PATH="./dlg_monitoring/dlg2prom/tests/Vitaliy.graph"
 
@@ -83,13 +83,16 @@ mkdir -p $LOG_DIR # To remove potential directory creation conflicts later.
 # Prometheus listener. Default path is "~/.dlg/lib"
 PROMETHEUS_LISTENER="dlg2prom.listener"
 
-srun --export=all /home/vogarko/test_venv/bin/python -m dlg.deploy.pawsey.start_dfms_cluster -l $LOG_DIR -L $LOGICAL_GRAPH_PATH --event-listener=$PROMETHEUS_LISTENER &
+srun --export=all /home/vogarko/test_venv/bin/python -m dlg.deploy.pawsey.start_dfms_cluster -l $LOG_DIR -L $LOGICAL_GRAPH_PATH --event-listener=$PROMETHEUS_LISTENER
 
 #-------------------------------------------------
-sleep 40
+# Finale.
+#-------------------------------------------------
+# Wait for the last data scrape.
+sleep 3
+# Kill Prometheus process (forcing it to write its data).
 kill $prometheus_pid
 wait $prometheus_pid
-ls $PROMETHEUS_DB_PATH
 
 echo "FINISHED!"
 
