@@ -2,7 +2,7 @@
 
 #SBATCH --ntasks-per-node=1
 #SBATCH --job-name=daliuge
-#SBATCH --time=00:01:00
+#SBATCH --time=00:02:00
 
 #-------------------------------------------------
 # Loading modules.
@@ -43,10 +43,10 @@ echo $TARGETS_STRING
 
 CONFIG_FILE_TEMPLATE="./prometheus_dlg_template.yml"
 CONFIG_FILE="./prometheus_dlg.yml"
-# Data scraping interval.
-INTERVAL="1s"
+# Data scraping interval (sec).
+SCRAPING_INTERVAL=1
 
-sed "s/__TARGETS__/$TARGETS_STRING/;s/__INTERVAL__/$INTERVAL/g" $CONFIG_FILE_TEMPLATE > $CONFIG_FILE
+sed "s/__TARGETS__/$TARGETS_STRING/;s/__INTERVAL__/${SCRAPING_INTERVAL}s/g" $CONFIG_FILE_TEMPLATE > $CONFIG_FILE
 
 #---------------------------------------------------
 # Running Prometheus server.
@@ -57,7 +57,9 @@ PROMETHEUS_APP="./prometheus-2.3.1.linux-amd64/prometheus"
 # Prometheus server listen address.
 PROMETHEUS_LISTEN_ADDRESS="0.0.0.0:8080"
 # Path to the Prometheus database.
-PROMETHEUS_DB_PATH="/tmp/vogarko-prometheus-data/"
+PROMETHEUS_DB_PATH="/tmp/dlg-prometheus-data/"
+
+mkdir -p $PROMETHEUS_DB_PATH
 
 COMMAND="$PROMETHEUS_APP --config.file=$CONFIG_FILE --web.listen-address=$PROMETHEUS_LISTEN_ADDRESS --storage.tsdb.path=$PROMETHEUS_DB_PATH"
 # Enabling debug logging.
@@ -67,13 +69,13 @@ echo $COMMAND
 $COMMAND &
 
 prometheus_pid=$!
-echo "PID=$prometheus_pid"
 
 #--------------------------------------------------
 # Runing DALiuGE.
 #--------------------------------------------------
 
 SID=$(date +"%Y-%m-%d_%H-%M-%S")
+# Folder for storing logs.
 LOG_DIR="./dlg-logs/"$SID
 # Path to logical graph.
 LOGICAL_GRAPH_PATH="./dlg_monitoring/dlg2prom/tests/Vitaliy.graph"
@@ -82,14 +84,14 @@ mkdir -p $LOG_DIR # To remove potential directory creation conflicts later.
 
 # Prometheus listener. Default path is "~/.dlg/lib"
 PROMETHEUS_LISTENER="dlg2prom.listener"
+# Sleep time after graph execution finished.
+SLEEP_TIME=$(($SCRAPING_INTERVAL+1))
 
-srun --export=all /home/vogarko/test_venv/bin/python -m dlg.deploy.pawsey.start_dfms_cluster -l $LOG_DIR -L $LOGICAL_GRAPH_PATH --event-listener=$PROMETHEUS_LISTENER
+echo "Sleeptime=$SLEEP_TIME"
+
+srun --export=all /home/vogarko/test_venv/bin/python -m dlg.deploy.pawsey.start_dfms_cluster -l $LOG_DIR -L $LOGICAL_GRAPH_PATH --event-listener=$PROMETHEUS_LISTENER --sleep-after-execution=$SLEEP_TIME
 
 #-------------------------------------------------
-# Finale.
-#-------------------------------------------------
-# Wait for the last data scrape.
-sleep 3
 # Kill Prometheus process (forcing it to write its data).
 kill $prometheus_pid
 wait $prometheus_pid
@@ -98,5 +100,6 @@ echo "FINISHED!"
 
 # Copy Prometheus DB to home directory.
 cp -r $PROMETHEUS_DB_PATH $HOME
+
 
 
