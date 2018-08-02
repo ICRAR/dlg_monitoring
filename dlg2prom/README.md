@@ -21,5 +21,5 @@ pip install prometheus_client
 dlg nm -P 9000 -v --event-listener=dlg2prom.listener --dlg-path=~/dlg_monitoring/dlg2prom
 
 *4. Translate and submit a graph to the DALiuGE node manager:*  
-dlg unroll-and-partition -L ~/dlg_monitoring/dlg2prom/tests/Vitaliy.graph | dlg submit -p 9000
+dlg unroll-and-partition -L ~/dlg_monitoring/graphs/Vitaliy.graph | dlg submit -p 9000
 
