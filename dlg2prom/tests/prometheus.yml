@@ -27,3 +27,7 @@ scrape_configs:
 
     static_configs:
     - targets: ['localhost:8080']
+
+# Remote write configuration (for InfluxDB).
+remote_write:
+  - url: "http://localhost:8086/api/v1/prom/write?db=prometheus"
