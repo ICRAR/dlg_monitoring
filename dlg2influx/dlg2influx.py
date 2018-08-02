@@ -19,51 +19,72 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 #    MA 02111-1307  USA
 #
+import os
 from influxdb import InfluxDBClient
 
-host = 'localhost'
-port = 8086
-
-dbname = 'daliuge'
-user = ''
-password = ''
+# Name of environment variables.
+host_env = 'INFLUXDB_HOST'
+port_env = 'INFLUXDB_PORT'
+dbname_env = 'INFLUXDB_NAME'
+user_env = 'INFLUXDB_USER'
+password_env = 'INFLUXDB_PASSWORD'
+graph_sha_env = 'GRAPH_SHA'
 
 class listener(object):
     """
     A listener class for storing DALiuGE drop events to InfluxDB database.
     """
     def __init__(self):
+        # Retrieve database info from environment variables.
+        host = os.getenv(host_env, 'localhost')
+        port = os.getenv(port_env, 8086)
+        dbname = os.getenv(dbname_env, 'daliuge')
+        user = os.getenv(user_env, '')
+        password = os.getenv(password_env, '')
+
         """Instantiate the connection to the InfluxDB client."""
-        protocol = 'json'
         self.client = InfluxDBClient(host, port, user, password, dbname)
 
+        #self.graph_sha = os.getenv(graph_sha_env, None)
+        self.graph_sha = os.getenv(graph_sha_env, 'test')
+
     def handleEvent(self, event):
-        if (event.type == 'execStatus'):
-        # An event from application drop received.
-            oid = event.oid
-            name = event.name
-            print "Handling the event with oid =", oid
-            #
-            value = -1
-            if (event.execStatus == 1):
-            # Started.
-                value = 1
-            elif (event.execStatus == 2):
-            # Finished.
-                value = 0
-            # Create measurement data.
-            json_body = [
-                {
-                    "measurement": event.session_id.replace(".", "_"),
-                    "tags": {
-                        "oid": oid,
-                        "name": name
-                    },
-                    "fields": {
-                        "value": value
+        if (self.graph_sha is not None):
+            if (event.type == 'execStatus'):
+            # An event from application drop received.
+                oid = event.oid
+                name = event.name
+                print "Handling the event with oid =", oid
+                # Calculate the event status.
+                value = -1
+                if (event.execStatus == 1):
+                # Event started.
+                    value = 1
+                elif (event.execStatus == 2):
+                # Event finished.
+                    value = 0
+
+                measurement_name = self.graph_sha
+                session_id = event.session_id
+
+                # Create measurement data.
+                json_body = [
+                    {
+                        "measurement": measurement_name,
+                        "tags": {
+                            "session_id": session_id,
+                            "oid": oid,
+                            "name": name
+                        },
+                        "fields": {
+                            "value": value
+                        }
                     }
-                }
-            ]
-            # Write data to the database.
-            self.client.write_points(json_body)
+                ]
+
+                try:
+                    # Write data to the database.
+                    self.client.write_points(json_body)
+                except Exception as e:
+                    print e
 
