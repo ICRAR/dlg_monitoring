@@ -23,6 +23,13 @@ EVENT_LISTENER_PATH="$HOME/dlg_monitoring/dlg2influx/dlg2influx.py"
 EVENT_LISTENER_CLASS="dlg2influx.listener"
 
 #-------------------------------------------------
+# Extract sha-value from the graph.
+#-------------------------------------------------
+SHA=$(sed -r -n 's/.*"sha": *"([a-z0-9]+)".*/\1/p' $LOGICAL_GRAPH_PATH)
+echo "SHA=$SHA"
+export GRAPH_SHA=$SHA
+
+#-------------------------------------------------
 # Loading modules.
 #-------------------------------------------------
 
