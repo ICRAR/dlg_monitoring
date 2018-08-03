@@ -22,7 +22,7 @@
 import os
 from influxdb import InfluxDBClient
 
-# Name of environment variables.
+# Names of environment variables.
 host_env = 'INFLUXDB_HOST'
 port_env = 'INFLUXDB_PORT'
 dbname_env = 'INFLUXDB_NAME'
@@ -45,46 +45,57 @@ class listener(object):
         """Instantiate the connection to the InfluxDB client."""
         self.client = InfluxDBClient(host, port, user, password, dbname)
 
-        #self.graph_sha = os.getenv(graph_sha_env, None)
+        try:
+            # Check if the database exists.
+            res = self.client.query("show databases")
+            db_exist = ([dbname] in res.raw['series'][0]['values'])
+            if db_exist:
+                print "Connected to Influx database: ", dbname
+            else:
+                # Create a new database.
+                print "Could not find Influx database. Creating a new database."
+                self.client.create_database(dbname)
+        except Exception as e:
+            print e
+
         self.graph_sha = os.getenv(graph_sha_env, 'test')
 
     def handleEvent(self, event):
-        if (self.graph_sha is not None):
-            if (event.type == 'execStatus'):
-            # An event from application drop received.
-                oid = event.oid
-                name = event.name
-                print "Handling the event with oid =", oid
-                # Calculate the event status.
-                value = -1
-                if (event.execStatus == 1):
-                # Event started.
-                    value = 1
-                elif (event.execStatus == 2):
-                # Event finished.
-                    value = 0
+        if (event.type == 'execStatus'):
+        # An event from application drop received.
+            oid = event.oid
+            name = event.name
+            print "Handling the event with oid =", oid
+            # Calculate the event status.
+            value = -1
+            if (event.execStatus == 1):
+            # Event started.
+                value = 1
+            elif (event.execStatus == 2):
+            # Event finished.
+                value = 0
 
-                measurement_name = self.graph_sha
-                session_id = event.session_id
+            measurement_name = self.graph_sha
+            session_id = event.session_id
 
-                # Create measurement data.
-                json_body = [
-                    {
-                        "measurement": measurement_name,
-                        "tags": {
-                            "session_id": session_id,
-                            "oid": oid,
-                            "name": name
-                        },
-                        "fields": {
-                            "value": value
-                        }
+            # Create measurement data.
+            json_body = [
+                {
+                    "measurement": measurement_name,
+                    "tags": {
+                        "session_id": session_id,
+                        "oid": oid,
+                        "name": name
+                    },
+                    "fields": {
+                        "value": value
                     }
-                ]
+                }
+            ]
 
-                try:
-                    # Write data to the database.
-                    self.client.write_points(json_body)
-                except Exception as e:
-                    print e
+            try:
+                # Write data to the database.
+                self.client.write_points(json_body)
+            except Exception as e:
+                print e
 
