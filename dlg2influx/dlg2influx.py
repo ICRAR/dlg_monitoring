@@ -59,7 +59,7 @@ class listener(object):
             print e
 
         self.graph_sha = os.getenv(graph_sha_env, 'test')
-	print "Graph sha =", self.graph_sha
+        print "Graph sha =", self.graph_sha
 
     def handleEvent(self, event):
         if (event.type == 'execStatus'):
