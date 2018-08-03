@@ -5,10 +5,11 @@
 #SBATCH --time=00:02:00
 
 #-------------------------------------------------
-# Common parameters.
+# Main parameters.
 #-------------------------------------------------
+
 # Path to a logical graph.
-LOGICAL_GRAPH_PATH="~/dlg_monitoring/graphs/Vitaliy.graph"
+LOGICAL_GRAPH_PATH="$HOME/dlg_monitoring/graphs/Vitaliy_long.graph"
 
 # InfluxDB access parameters.
 export INFLUXDB_HOST="ec2-54-159-33-236.compute-1.amazonaws.com"
@@ -16,6 +17,10 @@ export INFLUXDB_PORT="8086"
 export INFLUXDB_NAME="daliuge"
 export INFLUXDB_USER=""
 export INFLUXDB_PASSWORD=""
+
+# DALiuGE event listener.
+EVENT_LISTENER_PATH="$HOME/dlg_monitoring/dlg2influx/dlg2influx.py" 
+EVENT_LISTENER_CLASS="dlg2influx.listener"
 
 #-------------------------------------------------
 # Loading modules.
@@ -34,20 +39,17 @@ module load mpi4py
 
 SID=$(date +"%Y-%m-%d_%H-%M-%S")
 # Folder for storing logs.
-LOG_DIR="./dlg-logs/"$SID
+LOG_DIR="$HOME/dlg-logs/"$SID
 
 mkdir -p $LOG_DIR # To remove potential directory creation conflicts later.
 
-# Defualt DALiuGE libs path.
-DLG_DEFAULT_PATH="~/.dlg/lib"
+# Defualt DALiuGE lib path.
+DLG_LIB_PATH="$HOME/.dlg/lib"
 
-# DALiuGE event listener. Default path is "~/.dlg/lib"
-EVENT_LISTENER="dlg2influx.listener"
+# Copy event listener to DALiuGE libs folder.
+cp $EVENT_LISTENER_PATH $DLG_LIB_PATH
 
-# Copy listener to DALiuGE libs folder.
-cp ~/dlg_monitoring/dlg2influx/dlg2influx.py $DLG_DEFAULT_PATH
-
-srun --export=all /home/vogarko/test_venv/bin/python -m dlg.deploy.pawsey.start_dfms_cluster -l $LOG_DIR -L $LOGICAL_GRAPH_PATH --event-listener=$EVENT_LISTENER
+srun --export=all /home/vogarko/test_venv/bin/python -m dlg.deploy.pawsey.start_dfms_cluster -l $LOG_DIR -L $LOGICAL_GRAPH_PATH --event-listener=$EVENT_LISTENER_CLASS
 
 #-------------------------------------------------
 echo "FINISHED!"
