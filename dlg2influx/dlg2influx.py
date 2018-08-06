@@ -30,13 +30,25 @@ user_env = 'INFLUXDB_USER'
 password_env = 'INFLUXDB_PASSWORD'
 graph_sha_env = 'GRAPH_SHA'
 
+DEFAULT_DB_NAME='daliuge'
+
 class Reader(object):
     """
     A class that reads graph data from InfluxDB database.
     """
     def __init__(self, sha):
         self.sha = sha
-        print "Loaded processor."
+        # Connect to the InfluxDB client.
+        self.client = connect_to_db()
+
+        dbname = get_db_name()
+        # Check if the database exists.
+        db_exist = check_db_exists(self.client, dbname)
+
+        if db_exist:
+            print "Connected to InfluxDB database: ", dbname
+        else:
+            print "Could not connect to InfluxDB database: ", dbname
 
     def queryData(self):
         """
@@ -49,30 +61,24 @@ class Listener(object):
     A listener class for storing DALiuGE drop events to InfluxDB database.
     """
     def __init__(self):
-        # Retrieve database info from environment variables.
-        host = os.getenv(host_env, 'localhost')
-        port = os.getenv(port_env, 8086)
-        dbname = os.getenv(dbname_env, 'daliuge')
-        user = os.getenv(user_env, '')
-        password = os.getenv(password_env, '')
-
-        """Instantiate the connection to the InfluxDB client."""
-        self.client = InfluxDBClient(host, port, user, password, dbname)
+        # Connect to the InfluxDB client.
+        self.client = connect_to_db()
 
         try:
+            dbname = get_db_name()
             # Check if the database exists.
-            res = self.client.query("show databases")
-            db_exist = ([dbname] in res.raw['series'][0]['values'])
+            db_exist = check_db_exists(self.client, dbname)
+
             if db_exist:
-                print "Connected to Influx database: ", dbname
+                print "Connected to InfluxDB database: ", dbname
             else:
                 # Create a new database.
-                print "Could not find Influx database. Creating a new database."
+                print "Could not find InfluxDB database. Creating a new database."
                 self.client.create_database(dbname)
         except Exception as e:
             print e
 
-        self.graph_sha = os.getenv(graph_sha_env, 'test')
+        self.graph_sha = get_graph_sha()
         print "Graph sha =", self.graph_sha
 
     def handleEvent(self, event):
@@ -114,11 +120,38 @@ class Listener(object):
             except Exception as e:
                 print e
 
+def get_graph_sha():
+    return os.getenv(graph_sha_env, 'test')
+
+def get_db_name():
+    return os.getenv(dbname_env, DEFAULT_DB_NAME)
+
+def connect_to_db():
+    """Instantiate the connection to the InfluxDB client."""
+    # Retrieve database connection parameters from environment variables.
+    host = os.getenv(host_env, 'localhost')
+    port = os.getenv(port_env, 8086)
+    dbname = get_db_name()
+    user = os.getenv(user_env, '')
+    password = os.getenv(password_env, '')
+
+    client = InfluxDBClient(host, port, user, password, dbname)
+    return client
+
+def check_db_exists(client, dbname):
+    """ Check if the database exists."""
+    try:
+        res = client.query("show databases")
+        db_exist = ([dbname] in res.raw['series'][0]['values'])
+        return db_exist
+    except Exception as e:
+        print e
+
 def translate_lg_to_plg():
     """
     Parametrizes logical graph essentially translating LG to PLG (parametrized logical graph).
     """
-    sha = "123"
+    sha = get_graph_sha()
     reader = Reader(sha)
     reader.queryData()
 
