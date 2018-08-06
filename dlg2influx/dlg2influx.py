@@ -30,7 +30,7 @@ user_env = 'INFLUXDB_USER'
 password_env = 'INFLUXDB_PASSWORD'
 graph_sha_env = 'GRAPH_SHA'
 
-class reader(object):
+class Reader(object):
     """
     A class that reads graph data from InfluxDB database.
     """
@@ -44,7 +44,7 @@ class reader(object):
         """
         print "Called queryData() for sha =", self.sha
 
-class listener(object):
+class Listener(object):
     """
     A listener class for storing DALiuGE drop events to InfluxDB database.
     """
@@ -119,7 +119,7 @@ def translate_lg_to_plg():
     Parametrizes logical graph essentially translating LG to PLG (parametrized logical graph).
     """
     sha = "123"
-    reader = reader(sha)
+    reader = Reader(sha)
     reader.queryData()
 
 if __name__ == '__main__':

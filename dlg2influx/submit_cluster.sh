@@ -23,7 +23,7 @@ export INFLUXDB_PASSWORD=""
 
 # DALiuGE event listener.
 EVENT_LISTENER_PATH="$HOME/dlg_monitoring/dlg2influx/dlg2influx.py" 
-EVENT_LISTENER_CLASS="dlg2influx.listener"
+EVENT_LISTENER_CLASS="dlg2influx.Listener"
 
 # Graph parametrizer.
 PARAMETRIZER_PATH=$EVENT_LISTENER_PATH
