@@ -57,7 +57,6 @@ class Reader(object):
         Returns session IDs for a graph.
         """
         query = 'SHOW TAG VALUES FROM "' + self.graph_sha + '" WITH KEY = session_id'
-        print query
         res = self.client.query(query)
         sessions = []
         values = get_result_values(res)
@@ -72,11 +71,11 @@ class Reader(object):
         Returns -1 if no data found.
         """
         query = "SELECT ELAPSED(value,1s) FROM \"" + self.graph_sha + "\" WHERE \"key\" = '" + app_key + "' AND session_id = '" + session_id + "'"
-        print query
         res = self.client.query(query)
         values = get_result_values(res)
         exec_time = -1
         if values:
+            # TODO: Calculate average time among different oid.
             exec_time = values[0][1]
         return exec_time
 
@@ -187,10 +186,16 @@ def translate_lg_to_plg():
     parser.add_option("-L", "--logical-graph", action="store", type="string",
                       dest="logical_graph", help="The filename of the logical graph to parametrize", default=None)
 
+    parser.add_option("-o", "--output-graph", action="store", type="string",
+                      dest="output_graph", help="The filename of the output parametrized logical graph", default=None)
+
     (options, _) = parser.parse_args()
 
     if bool(options.logical_graph) == False:
         parser.error("A logical graph filename must be specified")
+
+    if bool(options.output_graph) == False:
+        parser.error("An output graph filename must be specified")
 
     lg_path = options.logical_graph
     if lg_path and not os.path.exists(lg_path):
@@ -204,15 +209,26 @@ def translate_lg_to_plg():
     reader = Reader(graph_sha)
     sessions = reader.getSessionIDs()
 
-    # Loop over graph applications.
+    # Loop over graph applications, and parametrize the execution time.
     for jd in lg['nodeDataArray']:
         categoryType = jd['categoryType']
         if (categoryType == 'ApplicationDrop'):
             key = str(jd['key'])
-            # Loop over all graph sessions.
+            avg_exec_time = 0.
+            counter = 0
+            # Loop over all graph sessions, and calculate the average execution time.
             for session in sessions:
                 exec_time = reader.getExecutionTime(session, key)
-                print key, session, exec_time
+                avg_exec_time += float(exec_time)
+                counter += 1
+            avg_exec_time /= float(counter)
+
+            # Replace execution time in the graph.
+            filter(lambda x: x['name'] == 'execution_time', jd['fields'])[0]['value'] = avg_exec_time
+
+    # Write the parametrized logical graph.
+    with open(options.output_graph, 'w') as outfile:
+        json.dump(lg, outfile)
 
 if __name__ == '__main__':
     translate_lg_to_plg()

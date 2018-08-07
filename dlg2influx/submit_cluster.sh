@@ -7,7 +7,6 @@
 #-------------------------------------------------
 # Main parameters.
 #-------------------------------------------------
-
 # Python interpreter path.
 PYTHON="/home/vogarko/test_venv/bin/python"
 
@@ -38,7 +37,6 @@ export GRAPH_SHA=$SHA
 #-------------------------------------------------
 # Loading modules.
 #-------------------------------------------------
-
 module swap PrgEnv-cray PrgEnv-gnu
 module load python/2.7.14
 # The pip-installed mpi4py module in the virtual_env somehow does not work with the
@@ -49,12 +47,15 @@ module load mpi4py
 #-----------------------------------------------------
 # Translate LG to PLG (Parametrized Logical Graph).
 #-----------------------------------------------------
-$PYTHON $PARAMETRIZER_PATH -L $LOGICAL_GRAPH_PATH
+TEMP_FOLDER="./tmp"
+SID=$(date +"%Y-%m-%d_%H-%M-%S")
+mkdir -p $TEMP_FOLDER
+$PARAMETRIZED_GRAPH_PATH = "$TEMP_FOLDER/PLG_${SID}.graph"
+$PYTHON $PARAMETRIZER_PATH -L $LOGICAL_GRAPH_PATH -o $PARAMETRIZED_GRAPH_PATH
 
 #--------------------------------------------------
 # Runing DALiuGE.
 #--------------------------------------------------
-
 SID=$(date +"%Y-%m-%d_%H-%M-%S")
 # Folder for storing logs.
 LOG_DIR="$HOME/dlg-logs/"$SID
@@ -67,7 +68,7 @@ DLG_LIB_PATH="$HOME/.dlg/lib"
 # Copy event listener to DALiuGE libs folder.
 cp $EVENT_LISTENER_PATH $DLG_LIB_PATH
 
-srun --export=all $PYTHON -m dlg.deploy.pawsey.start_dfms_cluster -l $LOG_DIR -L $LOGICAL_GRAPH_PATH --event-listener=$EVENT_LISTENER_CLASS
+srun --export=all $PYTHON -m dlg.deploy.pawsey.start_dfms_cluster -l $LOG_DIR -L $PARAMETRIZED_GRAPH_PATH --event-listener=$EVENT_LISTENER_CLASS
 
 #-------------------------------------------------
 echo "FINISHED!"
