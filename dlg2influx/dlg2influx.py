@@ -50,17 +50,35 @@ class Reader(object):
         if db_exist:
             print "Connected to InfluxDB database: ", dbname
         else:
-            print "Could not connect to InfluxDB database: ", dbname
+            print "Could not find the InfluxDB database: ", dbname
 
     def getSessionIDs(self):
         """
         Returns session IDs for a graph.
         """
-        res = self.client.query('SHOW TAG VALUES FROM "' + self.graph_sha + '" WITH KEY = session_id')
+        query = 'SHOW TAG VALUES FROM "' + self.graph_sha + '" WITH KEY = session_id'
+        print query
+        res = self.client.query(query)
         sessions = []
-        for [s, session_id] in get_result_values(res):
-            sessions.append(session_id)
+        values = get_result_values(res)
+        if values:
+            for [s, session_id] in values:
+                sessions.append(session_id)
         return sessions
+
+    def getExecutionTime(self, session_id, app_key):
+        """
+        Returns application execution time. 
+        Returns -1 if no data found.
+        """
+        query = "SELECT ELAPSED(value,1s) FROM \"" + self.graph_sha + "\" WHERE \"key\" = '" + app_key + "' AND session_id = '" + session_id + "'"
+        print query
+        res = self.client.query(query)
+        values = get_result_values(res)
+        exec_time = -1
+        if values:
+            exec_time = values[0][1]
+        return exec_time
 
 class Listener(object):
     """
@@ -129,7 +147,10 @@ class Listener(object):
                 print e
 
 def get_result_values(result):
-    return result.raw['series'][0]['values']
+    if 'series' in result.raw:
+        return result.raw['series'][0]['values']
+    else:
+        return []
 
 def get_graph_sha():
     return os.getenv(graph_sha_env, 'test')
@@ -179,10 +200,19 @@ def translate_lg_to_plg():
     with f:
         lg = json.load(f)
 
-    sha = get_graph_sha()
-    reader = Reader(sha)
+    graph_sha = get_graph_sha()
+    reader = Reader(graph_sha)
     sessions = reader.getSessionIDs()
-    print sessions
+
+    # Loop over graph applications.
+    for jd in lg['nodeDataArray']:
+        categoryType = jd['categoryType']
+        if (categoryType == 'ApplicationDrop'):
+            key = str(jd['key'])
+            # Loop over all graph sessions.
+            for session in sessions:
+                exec_time = reader.getExecutionTime(session, key)
+                print key, session, exec_time
 
 if __name__ == '__main__':
     translate_lg_to_plg()
