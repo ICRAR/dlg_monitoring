@@ -38,8 +38,8 @@ class Reader(object):
     """
     A class that reads graph data from InfluxDB database.
     """
-    def __init__(self, sha):
-        self.sha = sha
+    def __init__(self, graph_sha):
+        self.graph_sha = graph_sha
         # Connect to the InfluxDB client.
         self.client = connect_to_db()
 
@@ -52,11 +52,15 @@ class Reader(object):
         else:
             print "Could not connect to InfluxDB database: ", dbname
 
-    def queryData(self):
+    def getSessionIDs(self):
         """
-        Read data from InfluxDB.
+        Returns session IDs for a graph.
         """
-        print "Called queryData() for sha =", self.sha
+        res = self.client.query('SHOW TAG VALUES FROM "' + self.graph_sha + '" WITH KEY = session_id')
+        sessions = []
+        for [s, session_id] in get_result_values(res):
+            sessions.append(session_id)
+        return sessions
 
 class Listener(object):
     """
@@ -124,6 +128,9 @@ class Listener(object):
             except Exception as e:
                 print e
 
+def get_result_values(result):
+    return result.raw['series'][0]['values']
+
 def get_graph_sha():
     return os.getenv(graph_sha_env, 'test')
 
@@ -145,8 +152,8 @@ def connect_to_db():
 def check_db_exists(client, dbname):
     """ Check if the database exists."""
     try:
-        res = client.query("show databases")
-        db_exist = ([dbname] in res.raw['series'][0]['values'])
+        res = client.query("SHOW DATABASES")
+        db_exist = ([dbname] in get_result_values(res))
         return db_exist
     except Exception as e:
         print e
@@ -171,11 +178,11 @@ def translate_lg_to_plg():
     f = open(lg_path)
     with f:
         lg = json.load(f)
-        print lg
 
     sha = get_graph_sha()
     reader = Reader(sha)
-    reader.queryData()
+    sessions = reader.getSessionIDs()
+    print sessions
 
 if __name__ == '__main__':
     translate_lg_to_plg()
