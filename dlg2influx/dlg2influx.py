@@ -85,7 +85,6 @@ class Listener(object):
         if (event.type == 'execStatus'):
         # An event from application drop received.
             oid = event.oid
-            name = event.name
             print "Handling the event with oid =", oid
             # Calculate the event status.
             value = -1
@@ -98,6 +97,8 @@ class Listener(object):
 
             measurement_name = self.graph_sha
             session_id = event.session_id
+            key = event.lg_key
+            name = event.name
 
             # Create measurement data.
             json_body = [
@@ -106,6 +107,7 @@ class Listener(object):
                     "tags": {
                         "session_id": session_id,
                         "oid": oid,
+                        "key": key,
                         "name": name
                     },
                     "fields": {
