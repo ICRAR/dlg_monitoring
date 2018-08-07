@@ -50,7 +50,7 @@ module load mpi4py
 TEMP_FOLDER="./tmp"
 SID=$(date +"%Y-%m-%d_%H-%M-%S")
 mkdir -p $TEMP_FOLDER
-$PARAMETRIZED_GRAPH_PATH = "$TEMP_FOLDER/PLG_${SID}.graph"
+PARAMETRIZED_GRAPH_PATH="$TEMP_FOLDER/PLG_${SID}.graph"
 $PYTHON $PARAMETRIZER_PATH -L $LOGICAL_GRAPH_PATH -o $PARAMETRIZED_GRAPH_PATH
 
 #--------------------------------------------------
