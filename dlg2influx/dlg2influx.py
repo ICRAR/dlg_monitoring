@@ -224,7 +224,7 @@ def translate_lg_to_plg():
             avg_exec_time /= float(counter)
 
             # Replace execution time in the graph.
-            filter(lambda x: x['name'] == 'execution_time', jd['fields'])[0]['value'] = avg_exec_time
+            filter(lambda x: x['name'] == 'execution_time', jd['fields'])[0]['value'] = str(avg_exec_time)
 
     # Write the parametrized logical graph.
     with open(options.output_graph, 'w') as outfile:
