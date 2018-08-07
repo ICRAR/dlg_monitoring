@@ -20,6 +20,8 @@
 #    MA 02111-1307  USA
 #
 import os
+import optparse
+import json
 from influxdb import InfluxDBClient
 
 # Names of environment variables.
@@ -153,6 +155,24 @@ def translate_lg_to_plg():
     """
     Parametrizes logical graph essentially translating LG to PLG (parametrized logical graph).
     """
+    parser = optparse.OptionParser()
+    parser.add_option("-L", "--logical-graph", action="store", type="string",
+                      dest="logical_graph", help="The filename of the logical graph to parametrize", default=None)
+
+    (options, _) = parser.parse_args()
+
+    if bool(options.logical_graph) == False:
+        parser.error("A logical graph filename must be specified")
+
+    lg_path = options.logical_graph
+    if lg_path and not os.path.exists(lg_path):
+        parser.error("Cannot locate graph file at '{0}'".format(lg_path))
+
+    f = open(lg_path)
+    with f:
+        lg = json.load(f)
+        print lg
+
     sha = get_graph_sha()
     reader = Reader(sha)
     reader.queryData()

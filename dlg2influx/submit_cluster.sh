@@ -49,7 +49,7 @@ module load mpi4py
 #-----------------------------------------------------
 # Translate LG to PLG (Parametrized Logical Graph).
 #-----------------------------------------------------
-$PYTHON $PARAMETRIZER_PATH
+$PYTHON $PARAMETRIZER_PATH -L $LOGICAL_GRAPH_PATH
 
 #--------------------------------------------------
 # Runing DALiuGE.
