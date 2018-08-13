@@ -171,7 +171,7 @@ class Connector(object):
     def __init__(self):
         self.host = os.getenv(host_env, 'localhost')
         self.port = os.getenv(port_env, 8086)
-        self.dbname = get_db_name()
+        self.dbname = os.getenv(dbname_env, DEFAULT_DB_NAME)
         self.user = os.getenv(user_env, '')
         self.password = os.getenv(password_env, '')
 
@@ -211,9 +211,6 @@ def get_result_values(result):
 def get_graph_sha():
     return os.getenv(graph_sha_env, 'test')
 
-def get_db_name():
-    return os.getenv(dbname_env, DEFAULT_DB_NAME)
-
 def translate_lg_to_plg():
     """
     Parametrizes logical graph essentially translating LG to PLG (parametrized logical graph).
@@ -248,6 +245,8 @@ def translate_lg_to_plg():
     # Write the parametrized logical graph.
     with open(options.output_graph, 'w') as outfile:
         json.dump(lg, outfile)
+
+    print "Translated LG to PLG and wrote result to: ", options.output_graph
 
 if __name__ == '__main__':
     translate_lg_to_plg()
