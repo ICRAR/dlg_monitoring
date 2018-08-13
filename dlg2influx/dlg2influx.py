@@ -140,8 +140,28 @@ class Translator(object):
         self.graph_sha = graph_sha
         self.reader = Reader(graph_sha)
 
+    def get_average_execution_time(self, sessions, app_key):
+        """
+        Returns the average execution time, for a given application, among different sessions.
+        """
+        if (len(sessions) > 0):
+            total_exec_time = 0.
+            # Loop over all graph sessions, and calculate the total execution time.
+            for session in sessions:
+                exec_time = self.reader.getExecutionTime(session, app_key)
+                total_exec_time += float(exec_time)
+            avg_exec_time = total_exec_time / float(len(sessions))
+            return avg_exec_time
+        else:
+            return 0.
+
     def translate_execution_time(self):
+        """
+        Parametrizes the application execution time in a graph.
+        """
         sessions = self.reader.getSessionIDs()
+        if (len(sessions) == 0):
+            return False
 
         num_app = 0
         # Loop over graph applications, and parametrize the execution time.
@@ -149,20 +169,14 @@ class Translator(object):
             categoryType = jd['categoryType']
             if (categoryType == 'ApplicationDrop'):
                 num_app += 1
-                key = str(jd['key'])
-                avg_exec_time = 0.
-                counter = 0
-                # Loop over all graph sessions, and calculate the average execution time.
-                for session in sessions:
-                    exec_time = self.reader.getExecutionTime(session, key)
-                    avg_exec_time += float(exec_time)
-                    counter += 1
-                avg_exec_time /= float(counter)
+                app_key = str(jd['key'])
+                avg_exec_time = self.get_average_execution_time(sessions, app_key)
 
                 # Replace execution time in the graph.
                 filter(lambda x: x['name'] == 'execution_time', jd['fields'])[0]['value'] = str(int(avg_exec_time))
 
-        print "Translated execution time for ", num_app, " applications"
+        print "Translated execution time for ", num_app, " applications, based on ", len(sessions), " sessions data."
+        return True
 
 class Connector(object):
     """
@@ -246,7 +260,7 @@ def translate_lg_to_plg():
     with open(options.output_graph, 'w') as outfile:
         json.dump(lg, outfile)
 
-    print "Translated LG to PLG and wrote result to: ", options.output_graph
+    print "Translated LG to PLG and wrote the result to: ", options.output_graph
 
 if __name__ == '__main__':
     translate_lg_to_plg()
