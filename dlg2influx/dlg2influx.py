@@ -189,7 +189,8 @@ class Connector(object):
         self.user = os.getenv(user_env, '')
         self.password = os.getenv(password_env, '')
 
-    def check_db_exists(self, client, dbname):
+    @staticmethod
+    def check_db_exists(client, dbname):
         """ Check if the database exists."""
         try:
             res = client.query("SHOW DATABASES")
@@ -212,7 +213,7 @@ class Connector(object):
             if create_new_db:
                 # Create a new database.
                 print "Creating a new database."
-                self.client.create_database(dbname)
+                client.create_database(dbname)
 
         return client
 
