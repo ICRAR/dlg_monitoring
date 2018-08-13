@@ -41,16 +41,10 @@ class Reader(object):
     def __init__(self, graph_sha):
         self.graph_sha = graph_sha
         # Connect to the InfluxDB client.
-        self.client = connect_to_db()
-
-        dbname = get_db_name()
-        # Check if the database exists.
-        db_exist = check_db_exists(self.client, dbname)
-
-        if db_exist:
-            print "Connected to InfluxDB database: ", dbname
-        else:
-            print "Could not find the InfluxDB database: ", dbname
+        try:
+            self.client = Connector().connect(False)
+        except Exception as e:
+            print e
 
     def getSessionIDs(self):
         """
@@ -85,19 +79,8 @@ class Listener(object):
     """
     def __init__(self):
         # Connect to the InfluxDB client.
-        self.client = connect_to_db()
-
         try:
-            dbname = get_db_name()
-            # Check if the database exists.
-            db_exist = check_db_exists(self.client, dbname)
-
-            if db_exist:
-                print "Connected to InfluxDB database: ", dbname
-            else:
-                # Create a new database.
-                print "Could not find InfluxDB database. Creating a new database."
-                self.client.create_database(dbname)
+            self.client = Connector().connect(True)
         except Exception as e:
             print e
 
@@ -105,6 +88,9 @@ class Listener(object):
         print "Graph sha =", self.graph_sha
 
     def handleEvent(self, event):
+        """
+        This function gets called by DALiuGE events.
+        """
         if (event.type == 'execStatus'):
         # An event from application drop received.
             oid = event.oid
@@ -157,10 +143,12 @@ class Translator(object):
     def translate_execution_time(self):
         sessions = self.reader.getSessionIDs()
 
+        num_app = 0
         # Loop over graph applications, and parametrize the execution time.
         for jd in self.graph['nodeDataArray']:
             categoryType = jd['categoryType']
             if (categoryType == 'ApplicationDrop'):
+                num_app += 1
                 key = str(jd['key'])
                 avg_exec_time = 0.
                 counter = 0
@@ -170,9 +158,49 @@ class Translator(object):
                     avg_exec_time += float(exec_time)
                     counter += 1
                 avg_exec_time /= float(counter)
-    
+
                 # Replace execution time in the graph.
                 filter(lambda x: x['name'] == 'execution_time', jd['fields'])[0]['value'] = str(int(avg_exec_time))
+
+        print "Translated execution time for ", num_app, " applications"
+
+class Connector(object):
+    """
+    A class responsible for connection to InfluxDB database.
+    """
+    def __init__(self):
+        self.host = os.getenv(host_env, 'localhost')
+        self.port = os.getenv(port_env, 8086)
+        self.dbname = get_db_name()
+        self.user = os.getenv(user_env, '')
+        self.password = os.getenv(password_env, '')
+
+    def check_db_exists(self, client, dbname):
+        """ Check if the database exists."""
+        try:
+            res = client.query("SHOW DATABASES")
+            db_exist = ([dbname] in get_result_values(res))
+            return db_exist
+        except Exception as e:
+            print e
+
+    def connect(self, create_new_db = False):
+        """Instantiate the connection to the InfluxDB client."""
+        client = InfluxDBClient(self.host, self.port, self.user, self.password, self.dbname)
+
+        # Check if the database exists.
+        db_exist = self.check_db_exists(client, self.dbname)
+
+        if db_exist:
+            print "Connected to InfluxDB database: ", self.dbname
+        else:
+            print "Could not find the InfluxDB database: ", self.dbname
+            if create_new_db:
+                # Create a new database.
+                print "Creating a new database."
+                self.client.create_database(dbname)
+
+        return client
 
 def get_result_values(result):
     if 'series' in result.raw:
@@ -185,27 +213,6 @@ def get_graph_sha():
 
 def get_db_name():
     return os.getenv(dbname_env, DEFAULT_DB_NAME)
-
-def connect_to_db():
-    """Instantiate the connection to the InfluxDB client."""
-    # Retrieve database connection parameters from environment variables.
-    host = os.getenv(host_env, 'localhost')
-    port = os.getenv(port_env, 8086)
-    dbname = get_db_name()
-    user = os.getenv(user_env, '')
-    password = os.getenv(password_env, '')
-
-    client = InfluxDBClient(host, port, user, password, dbname)
-    return client
-
-def check_db_exists(client, dbname):
-    """ Check if the database exists."""
-    try:
-        res = client.query("SHOW DATABASES")
-        db_exist = ([dbname] in get_result_values(res))
-        return db_exist
-    except Exception as e:
-        print e
 
 def translate_lg_to_plg():
     """
