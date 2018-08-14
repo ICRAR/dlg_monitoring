@@ -65,6 +65,7 @@ class Reader(object):
                 sessions.append(session_id)
         return sessions
 
+    # TODO: Test the case when application started, but failed to finish - what is the result of query then?
     def getExecutionTime(self, session_id, app_key):
         """
         Returns application execution time. 
@@ -151,14 +152,22 @@ class Translator(object):
         Returns the average execution time, for a given application, among different sessions.
         """
         if (len(sessions) > 0):
-            total_exec_time = 0.
-            # Loop over all graph sessions, and calculate the total execution time.
-            for session in sessions:
-                exec_time = self.reader.getExecutionTime(session, app_key)
+            return 0.
+
+        total_exec_time = 0.
+        num_records = 0
+        # Loop over all graph sessions, and calculate the total execution time.
+        for session in sessions:
+            exec_time = self.reader.getExecutionTime(session, app_key)
+            if (exec_time >= 0):
+            # A record found in the DB.
                 total_exec_time += float(exec_time)
-            avg_exec_time = total_exec_time / float(len(sessions))
+                num_records += 1
+        if (num_records > 0):
+            avg_exec_time = total_exec_time / float(num_records)
             return avg_exec_time
         else:
+            # No records found in the DB.
             return 0.
 
     def translate_execution_time(self):
@@ -178,8 +187,9 @@ class Translator(object):
                 app_key = str(jd['key'])
                 avg_exec_time = self.get_average_execution_time(sessions, app_key)
 
-                # Replace execution time in the graph.
-                filter(lambda x: x['name'] == 'execution_time', jd['fields'])[0]['value'] = str(int(avg_exec_time))
+                if (avg_exec_time > 0.):
+                    # Replace execution time in the graph.
+                    filter(lambda x: x['name'] == 'execution_time', jd['fields'])[0]['value'] = str(int(avg_exec_time))
 
         print "Translated execution time for ", num_app, " applications, based on ", len(sessions), " sessions data."
         return True
