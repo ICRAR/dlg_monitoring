@@ -40,6 +40,9 @@ def _get_result_values(result):
     else:
         return []
 
+def _get_graph_sha():
+    return os.getenv(graph_sha_env, 'test')
+
 class Reader(object):
     """
     A class that reads graph data from InfluxDB database.
@@ -91,7 +94,7 @@ class Listener(object):
         except Exception as e:
             print e
 
-        self.graph_sha = get_graph_sha()
+        self.graph_sha = _get_graph_sha()
         print "Graph sha =", self.graph_sha
 
     def handleEvent(self, event):
@@ -233,9 +236,6 @@ class Connector(object):
 
         return client
 
-def get_graph_sha():
-    return os.getenv(graph_sha_env, 'test')
-
 def translate_lg_to_plg():
     """
     Parametrizes logical graph essentially translating LG to PLG (parametrized logical graph).
@@ -263,7 +263,7 @@ def translate_lg_to_plg():
     with f:
         lg = json.load(f)
 
-    graph_sha = get_graph_sha()
+    graph_sha = _get_graph_sha()
     translator = Translator(lg, graph_sha)
     translator.translate_execution_time()
 
