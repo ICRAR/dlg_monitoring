@@ -34,6 +34,12 @@ graph_sha_env = 'GRAPH_SHA'
 
 DEFAULT_DB_NAME='daliuge'
 
+def _get_result_values(result):
+    if 'series' in result.raw:
+        return result.raw['series'][0]['values']
+    else:
+        return []
+
 class Reader(object):
     """
     A class that reads graph data from InfluxDB database.
@@ -53,7 +59,7 @@ class Reader(object):
         query = 'SHOW TAG VALUES FROM "' + self.graph_sha + '" WITH KEY = session_id'
         res = self.client.query(query)
         sessions = []
-        values = get_result_values(res)
+        values = _get_result_values(res)
         if values:
             for [s, session_id] in values:
                 sessions.append(session_id)
@@ -66,7 +72,7 @@ class Reader(object):
         """
         query = "SELECT ELAPSED(value,1s) FROM \"" + self.graph_sha + "\" WHERE \"key\" = '" + app_key + "' AND session_id = '" + session_id + "'"
         res = self.client.query(query)
-        values = get_result_values(res)
+        values = _get_result_values(res)
         exec_time = -1
         if values:
             # TODO: Calculate average time among different oid.
@@ -194,7 +200,7 @@ class Connector(object):
         """ Check if the database exists."""
         try:
             res = client.query("SHOW DATABASES")
-            db_exist = ([dbname] in get_result_values(res))
+            db_exist = ([dbname] in _get_result_values(res))
             return db_exist
         except Exception as e:
             print e
@@ -216,12 +222,6 @@ class Connector(object):
                 client.create_database(dbname)
 
         return client
-
-def get_result_values(result):
-    if 'series' in result.raw:
-        return result.raw['series'][0]['values']
-    else:
-        return []
 
 def get_graph_sha():
     return os.getenv(graph_sha_env, 'test')
