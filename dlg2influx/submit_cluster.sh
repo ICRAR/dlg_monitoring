@@ -11,7 +11,8 @@
 PYTHON="/home/vogarko/test_venv/bin/python"
 
 # Path to a logical graph.
-LOGICAL_GRAPH_PATH="$HOME/dlg_monitoring/graphs/Vitaliy_long.graph"
+#LOGICAL_GRAPH_PATH="$HOME/dlg_monitoring/graphs/Vitaliy_long.graph"
+LOGICAL_GRAPH_PATH="$HOME/dlg_monitoring/graphs/Vitaliy_scatter.graph"
 
 # InfluxDB access parameters.
 export INFLUXDB_HOST="ec2-54-159-33-236.compute-1.amazonaws.com"
