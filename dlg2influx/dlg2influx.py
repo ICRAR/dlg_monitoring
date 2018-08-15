@@ -88,11 +88,10 @@ class Reader(object):
         oids = self._get_value_list(values)
         return oids
 
-    # TODO: Test the case when application started, but failed to finish - what is the result of query then?
     def getExecutionTime(self, session_id, app_key, oid):
         """
-        Returns application execution time. 
-        Returns -1 if no data found.
+        Returns application execution time.
+        Returns None if no data found.
         """
         query = "SELECT ELAPSED(value,1s) FROM \"" + self.graph_sha \
                 + "\" WHERE \"key\" = '" + app_key  + "'" \
@@ -100,10 +99,13 @@ class Reader(object):
                 + " AND oid = '" + oid + "'"
         res = self.client.query(query)
         values = _get_result_values(res)
-        exec_time = -1
+
         if values:
             exec_time = values[0][1]
-        return exec_time
+            return exec_time
+        else:
+            # No records found.
+            return None
 
 class Listener(object):
     """
@@ -185,7 +187,7 @@ class Translator(object):
         for session in sessions:
             for oid in oids:
                 exec_time = self.reader.getExecutionTime(session, app_key, oid)
-                if (exec_time >= 0):
+                if (exec_time is not None):
                 # A record found in the DB.
                     total_exec_time += float(exec_time)
                     num_records += 1
@@ -194,7 +196,7 @@ class Translator(object):
             return avg_exec_time
         else:
             # No records found in the DB.
-            return 0.
+            return None
 
     def translate_execution_time(self):
         """
@@ -222,7 +224,7 @@ class Translator(object):
                 else:
                     field_name = 'fields'
 
-                if (avg_exec_time > 0.):
+                if (avg_exec_time is not None):
                     fields = jd[field_name]
                     exec_time_field = filter(lambda x: x['name'] == 'execution_time', fields)
 
