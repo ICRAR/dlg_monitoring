@@ -35,6 +35,9 @@ graph_sha_env = 'GRAPH_SHA'
 DEFAULT_DB_NAME='daliuge'
 
 def _get_result_values(result):
+    """
+    Returns key-value table from the raw InfluxDB query result.
+    """
     if 'series' in result.raw:
         return result.raw['series'][0]['values']
     else:
@@ -55,18 +58,35 @@ class Reader(object):
         except Exception as e:
             print e
 
+    def _get_value_list(self, values):
+        """
+        Returns value list from a query result (key-value) table.
+        """
+        list = []
+        if values:
+            for [key, value] in values:
+                list.append(value)
+        return list
+
     def getSessionIDs(self):
         """
         Returns session IDs for a graph.
         """
         query = 'SHOW TAG VALUES FROM "' + self.graph_sha + '" WITH KEY = session_id'
         res = self.client.query(query)
-        sessions = []
         values = _get_result_values(res)
-        if values:
-            for [s, session_id] in values:
-                sessions.append(session_id)
+        sessions = self._get_value_list(values)
         return sessions
+
+    def getOIDs(self, app_key):
+        """
+        Returns application OIDs for a given application in a graph.
+        """
+        query = 'SHOW TAG VALUES FROM "' + self.graph_sha + '" WITH KEY = oid WHERE "key" = \'' + app_key + "'"
+        res = self.client.query(query)
+        values = _get_result_values(res)
+        oids = self._get_value_list(values)
+        return oids
 
     # TODO: Test the case when application started, but failed to finish - what is the result of query then?
     def getExecutionTime(self, session_id, app_key):
@@ -181,6 +201,8 @@ class Translator(object):
         if (len(sessions) == 0):
             return False
 
+        # TODO: Translate time also for group applications.
+
         num_app = 0
         # Loop over graph applications, and parametrize the execution time.
         for jd in self.graph['nodeDataArray']:
@@ -189,6 +211,9 @@ class Translator(object):
                 num_app += 1
                 app_key = str(jd['key'])
                 avg_exec_time = self.get_average_execution_time(sessions, app_key)
+
+                oids = self.reader.getOIDs(app_key)
+                print app_key, oids
 
                 if (avg_exec_time > 0.):
                     # Replace execution time in the graph.
