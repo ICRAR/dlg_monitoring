@@ -174,7 +174,7 @@ class Translator(object):
         """
         Returns the average execution time, for a given application, among different sessions.
         """
-        if (len(sessions) > 0):
+        if (len(sessions) == 0):
             return 0.
 
         total_exec_time = 0.
@@ -201,25 +201,37 @@ class Translator(object):
         if (len(sessions) == 0):
             return False
 
-        # TODO: Translate time also for group applications.
-
-        num_app = 0
+        num_app_translated = 0
         # Loop over graph applications, and parametrize the execution time.
         for jd in self.graph['nodeDataArray']:
             categoryType = jd['categoryType']
-            if (categoryType == 'ApplicationDrop'):
-                num_app += 1
+            if (categoryType == 'ApplicationDrop' or categoryType == 'GroupComponent'):
+            # This is an application or application group node.
                 app_key = str(jd['key'])
                 avg_exec_time = self.get_average_execution_time(sessions, app_key)
+                #print 'avg_exec_time =', avg_exec_time
 
                 oids = self.reader.getOIDs(app_key)
-                print app_key, oids
+                #print app_key, oids
+
+                is_group = (categoryType == 'GroupComponent')
+
+                field_name = ''
+                if is_group:
+                    field_name = 'appFields'
+                else:
+                    field_name = 'fields'
 
                 if (avg_exec_time > 0.):
-                    # Replace execution time in the graph.
-                    filter(lambda x: x['name'] == 'execution_time', jd['fields'])[0]['value'] = str(int(avg_exec_time))
+                    fields = jd[field_name]
+                    exec_time_field = filter(lambda x: x['name'] == 'execution_time', fields)
 
-        print "Translated execution time for ", num_app, " applications, based on ", len(sessions), " sessions data."
+                    # Replace execution time in the graph.
+                    num_app_translated += 1
+                    new_value = int(avg_exec_time)
+                    exec_time_field[0]['value'] = str(new_value)
+
+        print "Translated execution time for ", num_app_translated, " applications, based on ", len(sessions), " sessions data."
         return True
 
 class Connector(object):
