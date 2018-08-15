@@ -89,17 +89,19 @@ class Reader(object):
         return oids
 
     # TODO: Test the case when application started, but failed to finish - what is the result of query then?
-    def getExecutionTime(self, session_id, app_key):
+    def getExecutionTime(self, session_id, app_key, oid):
         """
         Returns application execution time. 
         Returns -1 if no data found.
         """
-        query = "SELECT ELAPSED(value,1s) FROM \"" + self.graph_sha + "\" WHERE \"key\" = '" + app_key + "' AND session_id = '" + session_id + "'"
+        query = "SELECT ELAPSED(value,1s) FROM \"" + self.graph_sha \
+                + "\" WHERE \"key\" = '" + app_key  + "'" \
+                + " AND session_id = '" + session_id + "'" \
+                + " AND oid = '" + oid + "'"
         res = self.client.query(query)
         values = _get_result_values(res)
         exec_time = -1
         if values:
-            # TODO: Calculate average time among different oid.
             exec_time = values[0][1]
         return exec_time
 
@@ -170,22 +172,23 @@ class Translator(object):
         self.graph_sha = graph_sha
         self.reader = Reader(graph_sha)
 
-    def get_average_execution_time(self, sessions, app_key):
+    def get_average_execution_time(self, app_key, sessions, oids):
         """
-        Returns the average execution time, for a given application, among different sessions.
+        Returns the average execution time, for a given application, among different sessions and OIDs.
         """
-        if (len(sessions) == 0):
+        if (len(sessions) == 0 or len(oids) == 0):
             return 0.
 
         total_exec_time = 0.
         num_records = 0
         # Loop over all graph sessions, and calculate the total execution time.
         for session in sessions:
-            exec_time = self.reader.getExecutionTime(session, app_key)
-            if (exec_time >= 0):
-            # A record found in the DB.
-                total_exec_time += float(exec_time)
-                num_records += 1
+            for oid in oids:
+                exec_time = self.reader.getExecutionTime(session, app_key, oid)
+                if (exec_time >= 0):
+                # A record found in the DB.
+                    total_exec_time += float(exec_time)
+                    num_records += 1
         if (num_records > 0):
             avg_exec_time = total_exec_time / float(num_records)
             return avg_exec_time
@@ -208,14 +211,11 @@ class Translator(object):
             if (categoryType == 'ApplicationDrop' or categoryType == 'GroupComponent'):
             # This is an application or application group node.
                 app_key = str(jd['key'])
-                avg_exec_time = self.get_average_execution_time(sessions, app_key)
-                #print 'avg_exec_time =', avg_exec_time
-
                 oids = self.reader.getOIDs(app_key)
-                #print app_key, oids
+                avg_exec_time = self.get_average_execution_time(app_key, sessions, oids)
+                print 'key, avg_exec_time =', app_key, avg_exec_time
 
                 is_group = (categoryType == 'GroupComponent')
-
                 field_name = ''
                 if is_group:
                     field_name = 'appFields'
