@@ -1,1 +1,482 @@
-{"copiesArrayObjects": true, "linkToPortIdProperty": "toPort", "linkFromPortIdProperty": "fromPort", "linkDataArray": [{"toPort": "2b7619b6-7c25-408d-bc40-a22051d82354", "to": -14, "points": [454.5500030517578, 367.1, 464.5500030517578, 367.1, 464.5500030517578, 366, 464.5500030517578, 366, 577.0500030517578, 366, 587.0500030517578, 366], "from": -13, "fromPort": "4fdb5137-48bf-42ca-9790-6a44210370f0"}, {"toPort": "e44598db-31ac-431d-b7cb-0c4204c8fac1", "to": -15, "points": [627.5500030517578, 409, 627.5500030517578, 419, 627.5500030517578, 420, 627.5500030517578, 420, 627.5500030517578, 538.6, 671.5500030517578, 538.6, 681.5500030517578, 538.6], "from": -14, "fromPort": "7915aba4-7ce8-428c-9529-dccd4766ef68"}, {"toPort": "d73e47fb-2bb2-48c5-8d9e-7711df0eb8ff", "to": -17, "points": [855.5500030517578, 538.6, 865.5500030517578, 538.6, 865.5500030517578, 538.6, 865.5500030517578, 538.6, 914.0500030517578, 538.6, 924.0500030517578, 538.6], "from": -15, "fromPort": "cd502646-77b7-4c5e-98e9-a57a37f3a1b7"}, {"toPort": "69e28cbe-e7f0-46fa-83d7-59446c1f31d1", "fromPort": "323150da-ad2c-4162-8499-75c1f2e26e9f", "points": [1098.0500030517578, 538.6, 1108.0500030517578, 538.6, 1108.0500030517578, 538.6, 1108.0500030517578, 538.6, 1162.5500030517578, 538.6, 1172.5500030517578, 538.6], "from": -17, "to": -18}, {"toPort": "dcea605d-4b78-427f-8c8a-2ed3dee79335", "to": -16, "points": [1346.5500030517578, 538.6, 1356.5500030517578, 538.6, 1356.5500030517578, 538.6, 1356.5500030517578, 538.6, 1453.0500030517578, 538.6, 1463.0500030517578, 538.6], "from": -18, "fromPort": "17e272d8-1141-4e79-a6d3-542048625072"}], "nodeDataArray": [{"category": "memory", "loc": "280.5500030517578 336.5", "outputPorts": [{"IdText": "data", "Id": "4fdb5137-48bf-42ca-9790-6a44210370f0"}], "isData": true, "fields": [{"text": "Data volume", "name": "data_volume", "value": "5"}, {"text": "Group end", "name": "group_end", "value": "0"}], "colour": " #394BB2", "canHaveOutputs": true, "canHaveInputs": true, "categoryType": "DataDrop", "shape": "Card", "isGroup": false, "key": -13, "text": "Enter label", "type": "Memory Drop", "inputPorts": [{"IdText": "data", "Id": "ba4e7bd1-714f-4329-80b9-0df809feccf6"}]}, {"category": "SplitData", "loc": "614.0500030517578 392", "type": "Scatter", "isData": false, "outputPorts": [{"IdText": "data", "Id": "dec160fe-d25e-4af1-9469-913861004a9e"}], "outputLocalPorts": [{"IdText": "data", "Id": "7915aba4-7ce8-428c-9529-dccd4766ef68"}], "text": "Sleep", "colour": " #DDAD00", "canHaveOutputs": true, "canHaveInputs": true, "application": "Component", "desiredSize": {"width": 749, "class": "go.Size", "height": 283}, "inputLocalPorts": [{"IdText": "data", "Id": "bb2ea24d-7fbf-4f12-afa2-65a22e3b6a0a"}], "isGroup": true, "key": -14, "fields": [{"text": "Number of copies", "name": "num_of_copies", "value": "4"}, {"text": "Scatter axis", "name": "scatter_axis", "value": "time"}], "categoryType": "GroupComponent", "inputPorts": [{"IdText": "data", "Id": "2b7619b6-7c25-408d-bc40-a22051d82354"}], "appFields": [{"text": "Execution time", "name": "execution_time", "value": "5"}, {"text": "Num CPUs", "name": "num_cpus", "value": "1"}, {"text": "Group start", "name": "group_start", "value": "0"}, {"text": "Appclass", "name": "appclass", "value": "dlg.apps.simple.SleepApp"}, {"text": "Arg01", "name": "Arg01", "value": "sleepTime=5."}, {"text": "Arg02", "name": "Arg02", "value": ""}, {"text": "Arg03", "name": "Arg03", "value": ""}, {"text": "Arg04", "name": "Arg04", "value": ""}, {"text": "Arg05", "name": "Arg05", "value": ""}, {"text": "Arg06", "name": "Arg06", "value": ""}, {"text": "Arg07", "name": "Arg07", "value": ""}, {"text": "Arg08", "name": "Arg08", "value": ""}, {"text": "Arg09", "name": "Arg09", "value": ""}, {"text": "Arg10", "name": "Arg10", "value": ""}]}, {"category": "memory", "loc": "681.5500030517578 508", "group": -14, "outputPorts": [{"IdText": "data", "Id": "cd502646-77b7-4c5e-98e9-a57a37f3a1b7"}], "isData": true, "fields": [{"text": "Data volume", "name": "data_volume", "value": "5"}, {"text": "Group end", "name": "group_end", "value": "0"}], "colour": " #394BB2", "canHaveOutputs": true, "canHaveInputs": true, "categoryType": "DataDrop", "shape": "Card", "isGroup": false, "key": -15, "text": "Enter label", "type": "Memory Drop", "inputPorts": [{"IdText": "data", "Id": "e44598db-31ac-431d-b7cb-0c4204c8fac1"}]}, {"category": "End", "loc": "1463.0500030517578 508", "outputPorts": [], "isData": false, "fields": [], "colour": " #CB4335", "canHaveOutputs": false, "canHaveInputs": true, "categoryType": "ControlComponent", "isGroup": false, "key": -16, "text": "Enter label", "type": "End", "inputPorts": [{"IdText": "data", "Id": "dcea605d-4b78-427f-8c8a-2ed3dee79335"}]}, {"category": "Component", "loc": "924.0500030517578 508", "group": -14, "isData": false, "outputPorts": [{"IdText": "data", "Id": "323150da-ad2c-4162-8499-75c1f2e26e9f"}], "text": "Sleep", "colour": " #3498DB", "canHaveOutputs": true, "canHaveInputs": true, "categoryType": "ApplicationDrop", "isGroup": false, "key": -17, "fields": [{"text": "Execution time", "name": "execution_time", "value": "5"}, {"text": "Num CPUs", "name": "num_cpus", "value": "1"}, {"text": "Group start", "name": "group_start", "value": "0"}, {"text": "Appclass", "name": "appclass", "value": "dlg.apps.simple.SleepApp"}, {"text": "Arg01", "name": "Arg01", "value": "sleepTime=5."}, {"text": "Arg02", "name": "Arg02", "value": ""}, {"text": "Arg03", "name": "Arg03", "value": ""}, {"text": "Arg04", "name": "Arg04", "value": ""}, {"text": "Arg05", "name": "Arg05", "value": ""}, {"text": "Arg06", "name": "Arg06", "value": ""}, {"text": "Arg07", "name": "Arg07", "value": ""}, {"text": "Arg08", "name": "Arg08", "value": ""}, {"text": "Arg09", "name": "Arg09", "value": ""}, {"text": "Arg10", "name": "Arg10", "value": ""}], "type": "Python App", "inputPorts": [{"IdText": "data", "Id": "d73e47fb-2bb2-48c5-8d9e-7711df0eb8ff"}]}, {"category": "memory", "loc": "1172.5500030517578 508", "group": -14, "outputPorts": [{"IdText": "data", "Id": "17e272d8-1141-4e79-a6d3-542048625072"}], "isData": true, "fields": [{"text": "Data volume", "name": "data_volume", "value": "5"}, {"text": "Group end", "name": "group_end", "value": "0"}], "colour": " #394BB2", "canHaveOutputs": true, "canHaveInputs": true, "categoryType": "DataDrop", "shape": "Card", "isGroup": false, "key": -18, "text": "Enter label", "type": "Memory Drop", "inputPorts": [{"IdText": "data", "Id": "69e28cbe-e7f0-46fa-83d7-59446c1f31d1"}]}], "modelData": {"repo": "ICRAR/dlg_test_repo", "sha": "f5522d59efbca7386542b4dac173999ef5da8a0a", "fileType": "graph", "git_url": "https://api.github.com/repos/ICRAR/dlg_test_repo/git/blobs/f5522d59efbca7386542b4dac173999ef5da8a0a", "filePath": "Vitaliy_scatter.graph"}, "class": "go.GraphLinksModel", "copiesArrays": true}
+{
+    "copiesArrayObjects": true, 
+    "linkToPortIdProperty": "toPort", 
+    "linkFromPortIdProperty": "fromPort", 
+    "linkDataArray": [
+        {
+            "toPort": "2b7619b6-7c25-408d-bc40-a22051d82354", 
+            "to": -14, 
+            "points": [
+                454.5500030517578, 
+                367.1, 
+                464.5500030517578, 
+                367.1, 
+                464.5500030517578, 
+                366, 
+                464.5500030517578, 
+                366, 
+                577.0500030517578, 
+                366, 
+                587.0500030517578, 
+                366
+            ], 
+            "from": -13, 
+            "fromPort": "4fdb5137-48bf-42ca-9790-6a44210370f0"
+        }, 
+        {
+            "toPort": "e44598db-31ac-431d-b7cb-0c4204c8fac1", 
+            "to": -15, 
+            "points": [
+                627.5500030517578, 
+                409, 
+                627.5500030517578, 
+                419, 
+                627.5500030517578, 
+                420, 
+                627.5500030517578, 
+                420, 
+                627.5500030517578, 
+                538.6, 
+                671.5500030517578, 
+                538.6, 
+                681.5500030517578, 
+                538.6
+            ], 
+            "from": -14, 
+            "fromPort": "7915aba4-7ce8-428c-9529-dccd4766ef68"
+        }, 
+        {
+            "toPort": "d73e47fb-2bb2-48c5-8d9e-7711df0eb8ff", 
+            "to": -17, 
+            "points": [
+                855.5500030517578, 
+                538.6, 
+                865.5500030517578, 
+                538.6, 
+                865.5500030517578, 
+                538.6, 
+                865.5500030517578, 
+                538.6, 
+                914.0500030517578, 
+                538.6, 
+                924.0500030517578, 
+                538.6
+            ], 
+            "from": -15, 
+            "fromPort": "cd502646-77b7-4c5e-98e9-a57a37f3a1b7"
+        }, 
+        {
+            "toPort": "69e28cbe-e7f0-46fa-83d7-59446c1f31d1", 
+            "fromPort": "323150da-ad2c-4162-8499-75c1f2e26e9f", 
+            "points": [
+                1098.0500030517578, 
+                538.6, 
+                1108.0500030517578, 
+                538.6, 
+                1108.0500030517578, 
+                538.6, 
+                1108.0500030517578, 
+                538.6, 
+                1162.5500030517578, 
+                538.6, 
+                1172.5500030517578, 
+                538.6
+            ], 
+            "from": -17, 
+            "to": -18
+        }, 
+        {
+            "toPort": "dcea605d-4b78-427f-8c8a-2ed3dee79335", 
+            "to": -16, 
+            "points": [
+                1346.5500030517578, 
+                538.6, 
+                1356.5500030517578, 
+                538.6, 
+                1356.5500030517578, 
+                538.6, 
+                1356.5500030517578, 
+                538.6, 
+                1439.0500030517578, 
+                538.6, 
+                1449.0500030517578, 
+                538.6
+            ], 
+            "from": -18, 
+            "fromPort": "17e272d8-1141-4e79-a6d3-542048625072"
+        }
+    ], 
+    "nodeDataArray": [
+        {
+            "category": "memory", 
+            "loc": "280.5500030517578 336.5", 
+            "type": "Memory Drop", 
+            "outputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "4fdb5137-48bf-42ca-9790-6a44210370f0"
+                }
+            ], 
+            "isData": true, 
+            "fields": [
+                {
+                    "text": "Data volume", 
+                    "name": "data_volume", 
+                    "value": "5"
+                }, 
+                {
+                    "text": "Group end", 
+                    "name": "group_end", 
+                    "value": "0"
+                }
+            ], 
+            "colour": " #394BB2", 
+            "canHaveOutputs": true, 
+            "canHaveInputs": true, 
+            "shape": "Card", 
+            "isGroup": false, 
+            "key": -13, 
+            "text": "Enter label", 
+            "categoryType": "DataDrop", 
+            "inputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "ba4e7bd1-714f-4329-80b9-0df809feccf6"
+                }
+            ]
+        }, 
+        {
+            "category": "SplitData", 
+            "loc": "614.0500030517578 392", 
+            "isData": false, 
+            "outputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "dec160fe-d25e-4af1-9469-913861004a9e"
+                }
+            ], 
+            "outputLocalPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "7915aba4-7ce8-428c-9529-dccd4766ef68"
+                }
+            ], 
+            "text": "Sleep", 
+            "colour": " #DDAD00", 
+            "canHaveOutputs": true, 
+            "canHaveInputs": true, 
+            "application": "Component", 
+            "desiredSize": {
+                "width": 749, 
+                "class": "go.Size", 
+                "height": 283
+            }, 
+            "inputLocalPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "bb2ea24d-7fbf-4f12-afa2-65a22e3b6a0a"
+                }
+            ], 
+            "isGroup": true, 
+            "key": -14, 
+            "fields": [
+                {
+                    "text": "Number of copies", 
+                    "name": "num_of_copies", 
+                    "value": "4"
+                }, 
+                {
+                    "text": "Scatter axis", 
+                    "name": "scatter_axis", 
+                    "value": "time"
+                }
+            ], 
+            "categoryType": "GroupComponent", 
+            "type": "Scatter", 
+            "inputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "2b7619b6-7c25-408d-bc40-a22051d82354"
+                }
+            ], 
+            "appFields": [
+                {
+                    "text": "Execution time", 
+                    "name": "execution_time", 
+                    "value": "5"
+                }, 
+                {
+                    "text": "Num CPUs", 
+                    "name": "num_cpus", 
+                    "value": "1"
+                }, 
+                {
+                    "text": "Group start", 
+                    "name": "group_start", 
+                    "value": "0"
+                }, 
+                {
+                    "text": "Appclass", 
+                    "name": "appclass", 
+                    "value": "dlg.apps.simple.SleepApp"
+                }, 
+                {
+                    "text": "Arg01", 
+                    "name": "Arg01", 
+                    "value": "sleepTime=6."
+                }, 
+                {
+                    "text": "Arg02", 
+                    "name": "Arg02", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg03", 
+                    "name": "Arg03", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg04", 
+                    "name": "Arg04", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg05", 
+                    "name": "Arg05", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg06", 
+                    "name": "Arg06", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg07", 
+                    "name": "Arg07", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg08", 
+                    "name": "Arg08", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg09", 
+                    "name": "Arg09", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg10", 
+                    "name": "Arg10", 
+                    "value": ""
+                }
+            ]
+        }, 
+        {
+            "category": "memory", 
+            "loc": "681.5500030517578 508", 
+            "group": -14, 
+            "outputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "cd502646-77b7-4c5e-98e9-a57a37f3a1b7"
+                }
+            ], 
+            "isData": true, 
+            "type": "Memory Drop", 
+            "fields": [
+                {
+                    "text": "Data volume", 
+                    "name": "data_volume", 
+                    "value": "5"
+                }, 
+                {
+                    "text": "Group end", 
+                    "name": "group_end", 
+                    "value": "0"
+                }
+            ], 
+            "colour": " #394BB2", 
+            "canHaveOutputs": true, 
+            "canHaveInputs": true, 
+            "shape": "Card", 
+            "isGroup": false, 
+            "key": -15, 
+            "text": "Enter label", 
+            "categoryType": "DataDrop", 
+            "inputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "e44598db-31ac-431d-b7cb-0c4204c8fac1"
+                }
+            ]
+        }, 
+        {
+            "category": "End", 
+            "loc": "1449.0500030517578 508", 
+            "type": "End", 
+            "outputPorts": [], 
+            "isData": false, 
+            "fields": [], 
+            "colour": " #CB4335", 
+            "canHaveOutputs": false, 
+            "canHaveInputs": true, 
+            "isGroup": false, 
+            "key": -16, 
+            "text": "Enter label", 
+            "categoryType": "ControlComponent", 
+            "inputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "dcea605d-4b78-427f-8c8a-2ed3dee79335"
+                }
+            ]
+        }, 
+        {
+            "category": "Component", 
+            "loc": "924.0500030517578 508", 
+            "group": -14, 
+            "isData": false, 
+            "outputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "323150da-ad2c-4162-8499-75c1f2e26e9f"
+                }
+            ], 
+            "text": "Sleep", 
+            "colour": " #3498DB", 
+            "canHaveOutputs": true, 
+            "canHaveInputs": true, 
+            "type": "Python App", 
+            "isGroup": false, 
+            "key": -17, 
+            "fields": [
+                {
+                    "text": "Execution time", 
+                    "name": "execution_time", 
+                    "value": "5"
+                }, 
+                {
+                    "text": "Num CPUs", 
+                    "name": "num_cpus", 
+                    "value": "1"
+                }, 
+                {
+                    "text": "Group start", 
+                    "name": "group_start", 
+                    "value": "0"
+                }, 
+                {
+                    "text": "Appclass", 
+                    "name": "appclass", 
+                    "value": "dlg.apps.simple.SleepApp"
+                }, 
+                {
+                    "text": "Arg01", 
+                    "name": "Arg01", 
+                    "value": "sleepTime=7."
+                }, 
+                {
+                    "text": "Arg02", 
+                    "name": "Arg02", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg03", 
+                    "name": "Arg03", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg04", 
+                    "name": "Arg04", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg05", 
+                    "name": "Arg05", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg06", 
+                    "name": "Arg06", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg07", 
+                    "name": "Arg07", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg08", 
+                    "name": "Arg08", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg09", 
+                    "name": "Arg09", 
+                    "value": ""
+                }, 
+                {
+                    "text": "Arg10", 
+                    "name": "Arg10", 
+                    "value": ""
+                }
+            ], 
+            "categoryType": "ApplicationDrop", 
+            "inputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "d73e47fb-2bb2-48c5-8d9e-7711df0eb8ff"
+                }
+            ]
+        }, 
+        {
+            "category": "memory", 
+            "loc": "1172.5500030517578 508", 
+            "group": -14, 
+            "outputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "17e272d8-1141-4e79-a6d3-542048625072"
+                }
+            ], 
+            "isData": true, 
+            "type": "Memory Drop", 
+            "fields": [
+                {
+                    "text": "Data volume", 
+                    "name": "data_volume", 
+                    "value": "5"
+                }, 
+                {
+                    "text": "Group end", 
+                    "name": "group_end", 
+                    "value": "0"
+                }
+            ], 
+            "colour": " #394BB2", 
+            "canHaveOutputs": true, 
+            "canHaveInputs": true, 
+            "shape": "Card", 
+            "isGroup": false, 
+            "key": -18, 
+            "text": "Enter label", 
+            "categoryType": "DataDrop", 
+            "inputPorts": [
+                {
+                    "IdText": "data", 
+                    "Id": "69e28cbe-e7f0-46fa-83d7-59446c1f31d1"
+                }
+            ]
+        }
+    ], 
+    "modelData": {
+        "repo": "ICRAR/dlg_test_repo", 
+        "sha": "1713575fc71a1859821bfe65e6cf8574972b213a", 
+        "fileType": "graph", 
+        "git_url": "https://api.github.com/repos/ICRAR/dlg_test_repo/git/blobs/1713575fc71a1859821bfe65e6cf8574972b213a", 
+        "filePath": "Vitaliy_scatter.graph"
+    }, 
+    "class": "go.GraphLinksModel", 
+    "copiesArrays": true
+}
