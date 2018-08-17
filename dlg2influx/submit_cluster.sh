@@ -8,7 +8,7 @@
 # Main parameters.
 #-------------------------------------------------
 # Python interpreter path.
-PYTHON="/home/vogarko/test_venv/bin/python"
+PYTHON="$HOME/test_venv/bin/python"
 
 # Path to a logical graph.
 #LOGICAL_GRAPH_PATH="$HOME/dlg_monitoring/graphs/Vitaliy_long.graph"
@@ -27,6 +27,9 @@ EVENT_LISTENER_CLASS="dlg2influx.Listener"
 
 # Graph parametrizer.
 PARAMETRIZER_PATH=$EVENT_LISTENER_PATH
+
+# Path to the srun script.
+SRUN_SCRIPT_PATH="$HOME/dlg_monitoring/dlg2influx/run_dlg_with_node_exporter.sh"
 
 #-------------------------------------------------
 # Extract sha-value from the graph.
@@ -69,7 +72,7 @@ DLG_LIB_PATH="$HOME/.dlg/lib"
 # Copy event listener to DALiuGE libs folder.
 cp $EVENT_LISTENER_PATH $DLG_LIB_PATH
 
-srun --export=all $PYTHON -m dlg.deploy.pawsey.start_dfms_cluster -l $LOG_DIR -L $PARAMETRIZED_GRAPH_PATH --event-listener=$EVENT_LISTENER_CLASS
+srun --export=all $SRUN_SCRIPT_PATH $PYTHON -m dlg.deploy.pawsey.start_dfms_cluster -l $LOG_DIR -L $PARAMETRIZED_GRAPH_PATH --event-listener=$EVENT_LISTENER_CLASS
 
 #-------------------------------------------------
 echo "FINISHED!"
