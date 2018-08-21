@@ -99,13 +99,20 @@ prometheus_db_name=$INFLUXDB_NAME
 prometheus_user=$INFLUXDB_USER
 prometheus_password=$INFLUXDB_PASSWORD
 
-remote_write_url="${INFLUXDB_HOST}:${INFLUXDB_PORT}/api/v1/prom/write?u=${prometheus_user}&p=${prometheus_password}&db=${prometheus_db_name}"
+remote_write_url="${INFLUXDB_HOST}:${INFLUXDB_PORT}/api/v1/prom/write?u=${prometheus_user}\\&p=${prometheus_password}\\&db=${prometheus_db_name}"
 
 # Auto-generated config file path.
 prometheus_config="$HOME/prometheus_dlg.yml"
 
 # Generate the Prometheus config file from a template.
-sed "s/__TARGETS__/$prometheus_targets/;s/__REMOTE_WRITE_URL__/$remote_write_url/;s/__INTERVAL__/${prometheus_scraping_interval}s/g" $prometheus_template_config > $prometheus_config
+_sed_cmd="
+s/__TARGETS__/$prometheus_targets/
+s#__REMOTE_WRITE_URL__#$remote_write_url#
+s/__INTERVAL__/${prometheus_scraping_interval}s/g"
+
+echo "$_sed_cmd"
+
+sed "$_sed_cmd" $prometheus_template_config > $prometheus_config
 
 #---------------------------------------------------
 # Running Prometheus server.
