@@ -2,10 +2,10 @@
 
 #SBATCH --ntasks-per-node=1
 #SBATCH --job-name=daliuge
-#SBATCH --time=00:02:00
+#SBATCH --time=00:03:00
 
 #-------------------------------------------------
-# Main parameters.
+# Setup parameters.
 #-------------------------------------------------
 # Python interpreter path.
 python="$HOME/test_venv/bin/python"
@@ -23,11 +23,13 @@ graph_parametrizer=$dlg_listener
 # Path to the srun script.
 srun_script="$HOME/dlg_monitoring/dlg2influx/run_dlg_with_node_exporter.sh"
 
+# Path to the node exporter binary.
+export NODE_EXPORTER="$HOME/node_exporter-0.16.0.linux-amd64/node_exporter"
+
 #-------------------------------------------------
 # InfluxDB parameters.
 #-------------------------------------------------
-
-# InfluxDB access parameters.
+# InfluxDB access parameters. (These are also used by the listener & parametrizer.)
 export INFLUXDB_HOST="ec2-54-159-33-236.compute-1.amazonaws.com"
 export INFLUXDB_PORT="8086"
 export INFLUXDB_NAME="daliuge"
@@ -37,7 +39,7 @@ export INFLUXDB_PASSWORD=""
 #-------------------------------------------------
 # Prometheus parameters.
 #-------------------------------------------------
-# Target listen port. (Use the port number exposed by the node exporter)
+# Target listen port. (Using the port exposed by the node exporter.)
 prometheus_target_port=9100
 
 # Path to the template config file.
@@ -97,13 +99,18 @@ prometheus_db_name=$INFLUXDB_NAME
 prometheus_user=$INFLUXDB_USER
 prometheus_password=$INFLUXDB_PASSWORD
 
-remote_write_url="${INFLUXDB_HOST}:${INFLUXDB_PORT}/api/v1/prom/write?u=${prometheus_user}&p=${prometheus_password}&db=${prometheus_db_name}"
+remote_write_url="http://${INFLUXDB_HOST}:${INFLUXDB_PORT}/api/v1/prom/write?u=${prometheus_user}\\&p=${prometheus_password}\\&db=${prometheus_db_name}"
 
 # Auto-generated config file path.
 prometheus_config="$HOME/prometheus_dlg.yml"
 
 # Generate the Prometheus config file from a template.
-sed "s/__TARGETS__/$prometheus_targets/;s/__REMOTE_WRITE_URL__/$remote_write_url/;s/__INTERVAL__/${prometheus_scraping_interval}s/g" $prometheus_template_config > $prometheus_config
+_sed_cmd="
+s/__TARGETS__/$prometheus_targets/
+s#__REMOTE_WRITE_URL__#$remote_write_url#
+s/__INTERVAL__/${prometheus_scraping_interval}s/g"
+
+sed "$_sed_cmd" $prometheus_template_config > $prometheus_config
 
 #---------------------------------------------------
 # Running Prometheus server.
@@ -113,7 +120,7 @@ mkdir -p $prometheus_db_path
 run_command="$prometheus_app --config.file=$prometheus_config --web.listen-address=$prometheus_listen_address --storage.tsdb.path=$prometheus_db_path"
 
 # Enabling debug logging.
-run_command="$COMMAND --log.level=debug"
+run_command="$run_command --log.level=debug"
 
 echo $run_command
 $run_command &
@@ -147,12 +154,14 @@ cp $dlg_listener $dlg_lib_path
 
 srun --export=all $srun_script $python -m dlg.deploy.pawsey.start_dfms_cluster -l $dlg_log_dir -L $parametrized_graph --event-listener=$dlg_listener_class
 
+echo "Finished srun!"
+
 #-------------------------------------------------
-# Kill Prometheus server (forcing it to write its data).
+# Kill Prometheus server (forcing it to write/flush the data).
 kill $prometheus_pid
 wait $prometheus_pid
 
-echo "FINISHED!"
+echo "Finished all!"
 
 
 
