@@ -2,7 +2,7 @@
 
 #SBATCH --ntasks-per-node=1
 #SBATCH --job-name=daliuge
-#SBATCH --time=00:02:00
+#SBATCH --time=00:03:00
 
 #-------------------------------------------------
 # Setup parameters.
@@ -99,7 +99,7 @@ prometheus_db_name=$INFLUXDB_NAME
 prometheus_user=$INFLUXDB_USER
 prometheus_password=$INFLUXDB_PASSWORD
 
-remote_write_url="${INFLUXDB_HOST}:${INFLUXDB_PORT}/api/v1/prom/write?u=${prometheus_user}\\&p=${prometheus_password}\\&db=${prometheus_db_name}"
+remote_write_url="http://${INFLUXDB_HOST}:${INFLUXDB_PORT}/api/v1/prom/write?u=${prometheus_user}\\&p=${prometheus_password}\\&db=${prometheus_db_name}"
 
 # Auto-generated config file path.
 prometheus_config="$HOME/prometheus_dlg.yml"
@@ -109,8 +109,6 @@ _sed_cmd="
 s/__TARGETS__/$prometheus_targets/
 s#__REMOTE_WRITE_URL__#$remote_write_url#
 s/__INTERVAL__/${prometheus_scraping_interval}s/g"
-
-echo "$_sed_cmd"
 
 sed "$_sed_cmd" $prometheus_template_config > $prometheus_config
 
@@ -156,12 +154,14 @@ cp $dlg_listener $dlg_lib_path
 
 srun --export=all $srun_script $python -m dlg.deploy.pawsey.start_dfms_cluster -l $dlg_log_dir -L $parametrized_graph --event-listener=$dlg_listener_class
 
+echo "Finished srun!"
+
 #-------------------------------------------------
-# Kill Prometheus server (forcing it to write its data).
+# Kill Prometheus server (forcing it to write/flush the data).
 kill $prometheus_pid
 wait $prometheus_pid
 
-echo "FINISHED!"
+echo "Finished all!"
 
 
 
