@@ -22,6 +22,7 @@
 import os
 import optparse
 import json
+import socket
 from influxdb import InfluxDBClient
 
 # Names of environment variables.
@@ -140,8 +141,9 @@ class Listener(object):
 
             measurement_name = self.graph_sha
             session_id = event.session_id
-            key = event.lg_key
-            name = event.name
+            app_key = event.lg_key
+            app_name = event.name
+            host_name = socket.gethostname()
 
             # Create measurement data.
             json_body = [
@@ -150,8 +152,9 @@ class Listener(object):
                     "tags": {
                         "session_id": session_id,
                         "oid": oid,
-                        "key": key,
-                        "name": name
+                        "key": app_key,
+                        "name": app_name,
+                        "host": host_name
                     },
                     "fields": {
                         "value": value
