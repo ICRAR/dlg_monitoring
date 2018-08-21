@@ -26,7 +26,6 @@ srun_script="$HOME/dlg_monitoring/dlg2influx/run_dlg_with_node_exporter.sh"
 #-------------------------------------------------
 # InfluxDB parameters.
 #-------------------------------------------------
-
 # InfluxDB access parameters.
 export INFLUXDB_HOST="ec2-54-159-33-236.compute-1.amazonaws.com"
 export INFLUXDB_PORT="8086"
@@ -37,7 +36,7 @@ export INFLUXDB_PASSWORD=""
 #-------------------------------------------------
 # Prometheus parameters.
 #-------------------------------------------------
-# Target listen port. (Use the port number exposed by the node exporter)
+# Target listen port. (Using the port exposed by the node exporter.)
 prometheus_target_port=9100
 
 # Path to the template config file.
@@ -113,7 +112,7 @@ mkdir -p $prometheus_db_path
 run_command="$prometheus_app --config.file=$prometheus_config --web.listen-address=$prometheus_listen_address --storage.tsdb.path=$prometheus_db_path"
 
 # Enabling debug logging.
-run_command="$COMMAND --log.level=debug"
+run_command="$run_command --log.level=debug"
 
 echo $run_command
 $run_command &
