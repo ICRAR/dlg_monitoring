@@ -5,7 +5,7 @@
 #SBATCH --time=00:02:00
 
 #-------------------------------------------------
-# Main parameters.
+# Setup parameters.
 #-------------------------------------------------
 # Python interpreter path.
 python="$HOME/test_venv/bin/python"
@@ -23,10 +23,13 @@ graph_parametrizer=$dlg_listener
 # Path to the srun script.
 srun_script="$HOME/dlg_monitoring/dlg2influx/run_dlg_with_node_exporter.sh"
 
+# Path to the node exporter binary.
+export NODE_EXPORTER="$HOME/node_exporter-0.16.0.linux-amd64/node_exporter"
+
 #-------------------------------------------------
 # InfluxDB parameters.
 #-------------------------------------------------
-# InfluxDB access parameters.
+# InfluxDB access parameters. (These are also used by the listener & parametrizer.)
 export INFLUXDB_HOST="ec2-54-159-33-236.compute-1.amazonaws.com"
 export INFLUXDB_PORT="8086"
 export INFLUXDB_NAME="daliuge"
