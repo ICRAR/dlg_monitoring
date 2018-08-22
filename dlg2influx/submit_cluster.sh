@@ -11,7 +11,7 @@
 python="$HOME/test_venv/bin/python"
 
 # Path to a logical graph.
-logical_graph="$HOME/dlg_monitoring/graphs/Vitaliy_scatter.graph"
+logical_graph="$HOME/dlg_monitoring/graphs/Vitaliy_scatter_long.graph"
 
 # DALiuGE event listener.
 dlg_listener="$HOME/dlg_monitoring/dlg2influx/dlg2influx.py" 
