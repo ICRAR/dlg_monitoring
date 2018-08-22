@@ -46,7 +46,7 @@ prometheus_target_port=9100
 prometheus_template_config="$HOME/dlg_monitoring/dlg2influx/prometheus_dlg_template.yml"
 
 # Data scraping interval (sec).
-prometheus_scraping_interval=1
+prometheus_scraping_interval=5
 
 # Path to Prometheus application.
 prometheus_app="./prometheus-2.3.1.linux-amd64/prometheus"
