@@ -34,6 +34,7 @@ password_env = 'INFLUXDB_PASSWORD'
 graph_sha_env = 'GRAPH_SHA'
 
 DEFAULT_DB_NAME='daliuge'
+MEASUREMENT_NAME_PREFIX = "dlg_"
 
 def _get_result_values(result):
     """
@@ -45,7 +46,16 @@ def _get_result_values(result):
         return []
 
 def _get_graph_sha():
+    """
+    Returns graph's sha value (i.e., unique identifier).
+    """
     return os.getenv(graph_sha_env, 'test')
+
+def _get_measurement_name(graph_sha):
+    """
+    Returns measurement name, corresponding to a processing graph.
+    """
+    return MEASUREMENT_NAME_PREFIX + graph_sha
 
 class Reader(object):
     """
@@ -73,7 +83,8 @@ class Reader(object):
         """
         Returns session IDs for a graph.
         """
-        query = 'SHOW TAG VALUES FROM "' + self.graph_sha + '" WITH KEY = session_id'
+        measurement_name = _get_measurement_name(self.graph_sha)
+        query = 'SHOW TAG VALUES FROM "' + measurement_name + '" WITH KEY = session_id'
         res = self.client.query(query)
         values = _get_result_values(res)
         sessions = self._get_value_list(values)
@@ -83,7 +94,8 @@ class Reader(object):
         """
         Returns application OIDs for a given application in a graph.
         """
-        query = 'SHOW TAG VALUES FROM "' + self.graph_sha + '" WITH KEY = oid WHERE "key" = \'' + app_key + "'"
+        measurement_name = _get_measurement_name(self.graph_sha)
+        query = 'SHOW TAG VALUES FROM "' + measurement_name + '" WITH KEY = oid WHERE "key" = \'' + app_key + "'"
         res = self.client.query(query)
         values = _get_result_values(res)
         oids = self._get_value_list(values)
@@ -94,7 +106,8 @@ class Reader(object):
         Returns application execution time.
         Returns None if no data found.
         """
-        query = "SELECT ELAPSED(value,1s) FROM \"" + self.graph_sha \
+        measurement_name = _get_measurement_name(self.graph_sha)
+        query = "SELECT ELAPSED(value,1s) FROM \"" + measurement_name \
                 + "\" WHERE \"key\" = '" + app_key  + "'" \
                 + " AND session_id = '" + session_id + "'" \
                 + " AND oid = '" + oid + "'"
@@ -139,7 +152,7 @@ class Listener(object):
             # Event finished.
                 value = 0
 
-            measurement_name = self.graph_sha
+            measurement_name = _get_measurement_name(self.graph_sha)
             session_id = event.session_id
             app_key = event.lg_key
             app_name = event.name
