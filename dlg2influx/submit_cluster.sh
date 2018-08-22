@@ -2,7 +2,7 @@
 
 #SBATCH --ntasks-per-node=1
 #SBATCH --job-name=daliuge
-#SBATCH --time=00:03:00
+#SBATCH --time=00:05:00
 
 #-------------------------------------------------
 # Setup parameters.

@@ -9,7 +9,7 @@ node_exporter_pid=$!
 dlg_pid=$!
 
 # TODO: Workaround, before proper stopping of DALiuGE gets implemened.
-sleep 60
+sleep 90
 kill -9 $dlg_pid
 
 kill $node_exporter_pid
