@@ -154,8 +154,6 @@ cp $dlg_listener $dlg_lib_path
 
 srun --export=all $srun_script $python -m dlg.deploy.pawsey.start_dfms_cluster -l $dlg_log_dir -L $parametrized_graph --event-listener=$dlg_listener_class
 
-echo "Finished srun!"
-
 #-------------------------------------------------
 # Kill Prometheus server (forcing it to write/flush the data).
 kill $prometheus_pid
