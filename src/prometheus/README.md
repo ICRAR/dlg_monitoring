@@ -22,7 +22,7 @@ DALiuGE graphs.
 
 INSTALLATION:
 For test purposes the whole system can be deployed in docker containers using
-the command 'docker_compose up' in the prometheus sub-directory. Before running
+the command 'docker-compose up' in the prometheus sub-directory. Before running
 that command you will need to adjust the file prometheus/prometheus.yml to
 include the IP address of the host running the containers. Please refer to the
 description in that file. When executing the docker_compose command this will

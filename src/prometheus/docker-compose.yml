@@ -1,7 +1,10 @@
 version: '3'
 networks:
   monitor-net:
-    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
 volumes:
     prometheus_data: {}
     grafana_data: {}
@@ -25,8 +28,8 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - monitor-net
-
+      monitor-net:
+        ipv4_address: 172.20.0.2
 ####
 # running node_exporter in a docker container does not really collect
 # the correct information about the host. Thus node_exporter should
@@ -51,16 +54,20 @@ services:
     ports:
       - 9101:9100
     networks:
-      - monitor-net
+      monitor-net:
+        ipv4_address: 172.20.0.3
 
   grafana:
    image: grafana/grafana:latest
    container_name: grafana
+   user: ${USER}
    volumes:
      - ./grafana/data:/var/lib/grafana
      - ./grafana/datasources:/etc/grafana/datasources
      - ./grafana/dashboards:/etc/grafana/dashboards
-     #- ./grafana/conf:/etc/grafana
+     - /etc/passwd:/etc/passwd
+     - /etc/group:/etc/group
+       #- ./grafana/conf:/etc/grafana
    #entrypoint: /setup.sh
    environment:
      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
@@ -72,4 +79,6 @@ services:
    ports:
      - 3000:3000
    networks:
-     - monitor-net
+      monitor-net:
+        ipv4_address: 172.20.0.4
+
